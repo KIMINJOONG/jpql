@@ -17,4 +17,18 @@
 1. 결과가 없으면 빈 리스트 반환
 
 - query.getSingleList(): 결과가 정확히 하나일때, 단일 객체 반환
-1. 결과가 없으면 
+1. 결과가 없으면 : javax.persistance.NoResultException
+2. 결과가 두개 이상이면: javax.persistance.NonUniqueResultException
+
+# 파라미터 바인딩 - 이름기준, 위치 기준
+```
+// 이름기준
+SELECT m FROM MEMBER m where m.username=:username
+query.setParameter("username", usernameParam);
+
+// 위치기준
+
+SELECT m FROM MEMBER m where m.username=?1
+query.setParameter(1, usernameParam);
+```
+이름 기준 권장
