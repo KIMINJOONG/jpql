@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.persistence.*;
+import java.util.List;
 
 @SpringBootApplication
 public class JpqlApplication {
@@ -18,12 +19,16 @@ public class JpqlApplication {
         try {
             Member member = new Member();
             member.setUsername("member1");
+            member.setAge(10);
             em.persist(member);
 
-            TypedQuery<Member> query1 =  em.createQuery("select m from Member m", Member.class);
-            TypedQuery<String> query2 =  em.createQuery("select m.username from Member m", Member.class);
-            Query query3 =  em.createQuery("select m.username, m.age from Member m", Member.class);
+            em.flush();
+            em.clear();
 
+            List<MemberDTO> resultList =  em.createQuery("select new com.example.jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class).getResultList();
+            MemberDTO memberDTO = resultList.get(0);
+            System.out.println("username : " + memberDTO.getUsername());
+            System.out.println("age : " + memberDTO.getAge());
             tx.commit();
 
         } catch(Exception e) {

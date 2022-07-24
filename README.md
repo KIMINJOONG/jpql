@@ -32,3 +32,24 @@ SELECT m FROM MEMBER m where m.username=?1
 query.setParameter(1, usernameParam);
 ```
 이름 기준 권장
+
+---
+
+# 프로젝션
+- SELECT 절에 조회할 대상을 지정하는것
+- 프로젝션 대상: 엔티티, 임베디드 타입, 스칼라 타입(숫자, 문자 등 기본 데이터 타입)
+- SELECT m FROM MEMBER m -> 엔티티 프로젝션
+- SELECT m.team FROM MEMBER m -> 엔티티 프로젝션
+- SELECT m.address FROM MEMBER m -> 임베디드 타입 프로젝션
+- SELECT m.username, m.age FROM MEMBER m -> 스칼라 타입 프로젝션
+- DISTINCT로 중복 제거
+
+# 프로젝션 - 여러값 조회
+- SELECT m.username, m.age FROM MEMBER m
+- Query 타입으로 조회
+- Object[] 타입으로 조회
+- new 명령어로 조회
+1. 단순값을 DTO로 바로 조회 SELECT new UserDTO(m.username, m.age) FROM MEMBER m
+- 패키지명을 포함한 전체 클래스 명 입력
+- 순서와 타입이 일치하는 생성자 필요
+    
