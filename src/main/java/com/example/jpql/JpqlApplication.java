@@ -17,18 +17,28 @@ public class JpqlApplication {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            em.persist(member);
+            for (int i = 0; i < 100; i++) {
+                Member member = new Member();
+                member.setUsername("member" + i);
+                member.setAge(i);
+                em.persist(member);
+            }
 
             em.flush();
             em.clear();
 
-            List<MemberDTO> resultList =  em.createQuery("select new com.example.jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class).getResultList();
-            MemberDTO memberDTO = resultList.get(0);
-            System.out.println("username : " + memberDTO.getUsername());
-            System.out.println("age : " + memberDTO.getAge());
+            List<Member> result =  em.createQuery("select m from Member m order by m.age desc", Member.class)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+
+            System.out.println("result = " +  result.size());
+
+            for (Member member1 : result) {
+                System.out.println("member1 = " + member1);
+            }
+
+
             tx.commit();
 
         } catch(Exception e) {

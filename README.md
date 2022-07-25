@@ -52,4 +52,20 @@ query.setParameter(1, usernameParam);
 1. 단순값을 DTO로 바로 조회 SELECT new UserDTO(m.username, m.age) FROM MEMBER m
 - 패키지명을 포함한 전체 클래스 명 입력
 - 순서와 타입이 일치하는 생성자 필요
+
+---
+
+# 페이징 API
+- JPA는 페이징을 다음 두 API로 추상화
+- setFirstResult(int startPosition): 조회 시작 위치 0
+- setMaxResult(int maxResult): 조회 할 데이터 수
+```
+// 페이징 쿼리
+List<Member> result =  em.createQuery("select m from Member m order by m.age desc", Member.class)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+```
+
+
     
