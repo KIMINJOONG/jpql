@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 @SpringBootApplication
@@ -24,28 +25,29 @@ public class JpqlApplication {
 
             Member member = new Member();
             member.setUsername("관리자1");
+            member.setTeam(team);
             em.persist(member);
 
             Member member2 = new Member();
             member2.setUsername("관리자2");
+            member2.setTeam(team);
             em.persist(member2);
-
 
 
             em.flush();
             em.clear();
 
-            String query = "select function('group_concat', m.username) from Member m";
+            String query = "select t.members from Team t";
 
-            List<String> result = em.createQuery(query, String.class)
+            Collection result = em.createQuery(query, Collection.class)
                     .setFirstResult(0)
                     .setMaxResults(10)
                     .getResultList();
 
             System.out.println("result = " + result.size());
 
-            for (String s : result) {
-                System.out.println("s = " + s);
+            for (Object o : result) {
+                System.out.println("s = " + o);
             }
 
 
