@@ -314,8 +314,88 @@ select t.name
 - 조인은 SQL 튜닝에 중요 포인트
 - 묵시적 조인은 조인이 일어나는 상황을 한눈에 파악하기 어려움
 
+---
 
+# JPQL - 페치 조인(fetch join) 실무에서 엄청나게 중요함!!
+- SQL 조인 종류 X
+- JPQL에서 성능 최적화를 위해 제공하는 기능
+- 연관된 엔티티나 컬렉션을 SQL한꺼번에 함께 조회하는 기능
+- join fetch 명령어 사용
+- 페치 조인 ::= [LEFT [OUTER] | INNER] JOIN FETCH 조인 경로
+
+# 엔티티 페치 조인
+- 회원을 조회하면서 연관된 팀도 함께 조회(SQL 한번에)
+- SQL을 보면 회원 뿐만 아니라 팀(T.*)도 함께 SELECT
+- [JPQL] select m from Member m join fetch m.team
+- [SQL] SELECT M.*, T.* FROM MEMBER M INNER JOIN TEAM T ON M.TEAM_ID = T.ID
+
+# 컬렉션 페치 조인
+- 일대다 관계, 컬렉션 페치 조인
+- [JQPL]
+```
+  select t
+  from Team t
+  join fetch t.members
+  where t.name = '팀A'
+```
+
+-[SQL]
+```
+  SELECT T.*, M.*
+  FROM TEAM T
+  INNER JOIN MEMBER M
+  ON T.ID = M.TEAM_ID
+  WHERE T.NAME = '팀A'
+```
+
+# 페치조인과 DISTINCT
+- SQL의 DISTINCT는 중복된 결과를 제거하는 명령
+- JPQL의 DISTINCT 2가지 기능 제공
+1. SQL에 DISTINCT 추가
+2. 애플리케이션에서 엔티티 중복 제거
+
+```
+  select distinct t
+  from Team t
+  where t.name = '팀A'
   
+  // SQL에 DISTINCT를 추가하지만 데이터가 다르므로 SQL결과에서 중복 제거 실패
+```
+
+- DISTINCT 추가로 애플리케이션에서 중복 제거 시도
+- 같은 식별자를 가진 Team 엔티티 제거
+
+# 페치조인과 일반조인의 차이
+- 일반 조인 실행시 연관된 엔티티를 함께 조회하지 않음
+- [JPQL]
+```
+  select t
+  from Team t
+  join t.members m 
+  where t.name = '팀A'
+```
+
+- [SQL]
+```
+  SELECT T.*
+  FROM TEAM T
+  INNER JOIN MEMBER M
+  ON T.ID = M.TEAM_ID
+  WHERE T.NAME = '팀A'
+```
+- JPQL은 결과를 반환 할 때 연관관계 고려 X
+- 단지 SELECT 절에 지정한 엔티티만 조회할 뿐
+- 여기서는 팀 엔티티만 조회하고, 회원 엔티티는 조회 X
+- 페치 조인을 사용할 때만 연관된 엔티티도 함께 조회(즉시 로딩)
+- 페치 조인은 객체 그래프를 SQL 한번에 조회하는 개념
+
+# 페치조인의 특징과 한계
+- 페치 조인 대상에는 별칭을 줄 수없다.
+1. 하이버 네이트는 가능, 가급적 사용 X
+- 둘 이상의 컬렉션은 페치조인 할 수 없다.
+- 컬렉션을 페치조인 하면 페이징 API(setFirstResult, setMaxResults)를 사용 할 수 없다.
+1. 일대일, 다대일 같은 단일 값 연관 필드들은 페치 조인해도 페이징 가능
+2. 하이버네이트는 경고 로그를 남기고 메모리에서 페이징(매우 위험)
     
 
 
