@@ -46,7 +46,7 @@ public class JpqlApplication {
             em.flush();
             em.clear();
 
-            String query = "select distinct t from Team t join fetch t.members";
+            String query = "select distinct t from Team t ";
 
             List<Team> result = em.createQuery(query, Team.class)
                     .setFirstResult(0)
@@ -55,17 +55,17 @@ public class JpqlApplication {
 
             System.out.println("result = " + result.size());
 
-//            for (Team team : result) {
-//                System.out.println("team = " + team.getName() + "," +
-//                        "members = " + team.getMembers().size());
-//
-//                // 회원1, 팀A(SQL)
-//                // 회원2, 팀A(1차 캐시)
-//                // 회원3, 팀B(SQL)
-//
-//                // 회원 100명 -> N + 1
-//
-//            }
+            for (Team team : result) {
+                System.out.println("team = " + team.getName() + "," +
+                        "members = " + team.getMembers().size());
+
+                // 회원1, 팀A(SQL)
+                // 회원2, 팀A(1차 캐시)
+                // 회원3, 팀B(SQL)
+
+                // 회원 100명 -> N + 1
+
+            }
 
 
             tx.commit();
